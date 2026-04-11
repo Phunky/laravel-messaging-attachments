@@ -1,0 +1,25 @@
+parameters:
+	ignoreErrors:
+		-
+			message: '#^Method Phunky\\LaravelMessagingAttachments\\Attachment\:\:conversation\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: src/Attachment.php
+
+		-
+			message: '#^Method Phunky\\LaravelMessagingAttachments\\Attachment\:\:message\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: src/Attachment.php
+
+		-
+			message: '#^Unable to resolve the template type TRelatedModel in call to method Illuminate\\Database\\Eloquent\\Model\:\:belongsTo\(\)$#'
+			identifier: argument.templateType
+			count: 2
+			path: src/Attachment.php
+
+		-
+			message: '#^PHPDoc tag @var with type Phunky\\LaravelMessaging\\Models\\Message is not subtype of native type \$this\(Phunky\\LaravelMessagingAttachments\\AttachmentExtension\)\.$#'
+			identifier: varTag.nativeType
+			count: 1
+			path: src/AttachmentExtension.php

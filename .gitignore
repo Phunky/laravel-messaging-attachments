@@ -1,0 +1,16 @@
+# Composer Related
+composer.lock
+/vendor
+
+# Caches
+.phpunit.cache
+.phpunit.result.cache
+/build
+
+# Misc
+.DS_Store
+**/.DS_Store
+.cursor/
+.claude/
+AGENTS.md
+CLAUDE.md
