@@ -23,7 +23,7 @@
     ],
     "require": {
         "php": "^8.4",
-        "phunky/laravel-messaging": "^0.0.1"
+        "phunky/laravel-messaging": "^0.0.1 || ^0.0.3"
     },
     "require-dev": {
         "larastan/larastan": "^3.0",
