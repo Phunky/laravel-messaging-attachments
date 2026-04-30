@@ -1,6 +1,9 @@
 <?php
 
+use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
+use Illuminate\Contracts\Events\ShouldDispatchAfterCommit;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Event;
 use Phunky\LaravelMessaging\Exceptions\CannotMessageException;
 use Phunky\LaravelMessaging\Models\Conversation;
@@ -330,6 +333,40 @@ describe('message delete', function () {
         $message->forceDelete();
 
         expect(Attachment::query()->where('message_id', $messageId)->count())->toBe(0);
+    });
+});
+
+describe('broadcasting', function () {
+    it('exposes stable top-level attachment payload ids', function () {
+        Config::set('messaging.broadcasting.enabled', true);
+        Config::set('messaging.broadcasting.channel_prefix', 'messaging');
+
+        [$a, $b] = attachmentUsers();
+        $messaging = app(MessagingService::class);
+        [$conversation] = $messaging->findOrCreateConversation($a, $b);
+        $message = $messaging->sendMessage($conversation, $a, 'hi');
+        $attachment = app(AttachmentService::class)->attach($message, $a, [
+            'type' => 'image',
+            'path' => 'a.jpg',
+            'filename' => 'a.jpg',
+        ]);
+
+        $attached = new AttachmentAttached($attachment, $message, $a);
+        $detached = new AttachmentDetached($message, $a, $attachment->getKey());
+
+        expect($attached)->toBeInstanceOf(ShouldBroadcast::class)
+            ->toBeInstanceOf(ShouldDispatchAfterCommit::class)
+            ->and($attached->broadcastWhen())->toBeTrue()
+            ->and($attached->broadcastOn()[0]->name)->toBeIn([
+                'private-messaging.conversation.'.$conversation->getKey(),
+                'presence-messaging.conversation.'.$conversation->getKey(),
+            ])
+            ->and($attached->broadcastAs())->toBe(AttachmentAttached::BROADCAST_NAME)
+            ->and($attached->broadcastWith()['conversation_id'])->toBe($conversation->getKey())
+            ->and($attached->broadcastWith()['message_id'])->toBe($message->getKey())
+            ->and($attached->broadcastWith()['attachment_id'])->toBe($attachment->getKey())
+            ->and($detached->broadcastAs())->toBe(AttachmentDetached::BROADCAST_NAME)
+            ->and($detached->broadcastWith()['attachment_id'])->toBe($attachment->getKey());
     });
 });
 
