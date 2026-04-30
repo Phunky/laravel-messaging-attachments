@@ -9,6 +9,8 @@ use Phunky\LaravelMessagingAttachments\Attachment;
 
 class AttachmentAttached extends BroadcastableMessagingEvent
 {
+    public const BROADCAST_NAME = 'messaging.attachment.attached';
+
     public function __construct(
         public Attachment $attachment,
         public Message $message,
@@ -19,6 +21,20 @@ class AttachmentAttached extends BroadcastableMessagingEvent
 
     public function broadcastAs(): string
     {
-        return 'messaging.attachment.attached';
+        return self::BROADCAST_NAME;
+    }
+
+    /**
+     * @return array{conversation_id: int|string, message_id: int|string, attachment_id: int|string, messageable_type: string, messageable_id: int|string}
+     */
+    public function broadcastWith(): array
+    {
+        return [
+            'conversation_id' => $this->message->getAttribute('conversation_id'),
+            'message_id' => $this->message->getKey(),
+            'attachment_id' => $this->attachment->getKey(),
+            'messageable_type' => $this->messageable->getMorphClass(),
+            'messageable_id' => $this->messageable->getKey(),
+        ];
     }
 }

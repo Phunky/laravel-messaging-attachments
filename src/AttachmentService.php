@@ -43,6 +43,8 @@ class AttachmentService
 
         event(new AttachmentAttached($attachment, $message, $sender));
 
+        $this->touchConversationActivity($this->conversationFromMessage($message), $attachment->created_at, 'attachment.attached');
+
         return $attachment;
     }
 
@@ -85,6 +87,8 @@ class AttachmentService
                 $created->push($attachment);
             }
 
+            $this->touchConversationActivity($this->conversationFromMessage($message), now(), 'attachment.attached');
+
             return $created;
         });
     }
@@ -100,6 +104,8 @@ class AttachmentService
         $id = $attachment->getKey();
 
         $attachment->delete();
+
+        $this->touchConversationActivity($this->conversationFromMessage($message), now(), 'attachment.detached');
 
         event(new AttachmentDetached($message, $sender, $id));
     }
@@ -147,6 +153,24 @@ class AttachmentService
         }
 
         return $id;
+    }
+
+    protected function conversationFromMessage(Message $message): Conversation
+    {
+        $conversation = $message->conversation;
+
+        if (! $conversation instanceof Conversation) {
+            throw new AttachmentException('Message has no conversation.');
+        }
+
+        return $conversation;
+    }
+
+    protected function touchConversationActivity(Conversation $conversation, mixed $activityAt, string $activityType): void
+    {
+        if (method_exists($this->messaging, 'touchConversationActivity')) {
+            $this->messaging->touchConversationActivity($conversation, $activityAt, $activityType);
+        }
     }
 
     protected function nextOrder(Message $message): int
