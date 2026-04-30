@@ -115,7 +115,7 @@ Both events use `Dispatchable` and `SerializesModels` and are safe to queue.
 | Event                | Properties                                                               |
 | -------------------- | ------------------------------------------------------------------------ |
 | `AttachmentAttached` | `Attachment $attachment`, `Message $message`, `Messageable $messageable` |
-| `AttachmentDetached` | `Message $message`, `Messageable $messageable`, `int                     |
+| `AttachmentDetached` | `Message $message`, `Messageable $messageable`, `int|string $attachmentId` |
 
 
 ```php

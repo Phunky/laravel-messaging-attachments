@@ -43,7 +43,7 @@ class AttachmentService
 
         event(new AttachmentAttached($attachment, $message, $sender));
 
-        $this->touchConversationActivity($this->conversationFromMessage($message), $attachment->created_at, 'attachment.attached');
+        $this->touchConversationActivity($this->conversationFromMessage($message), now(), 'attachment.attached');
 
         return $attachment;
     }

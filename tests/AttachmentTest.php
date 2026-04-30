@@ -357,7 +357,10 @@ describe('broadcasting', function () {
         expect($attached)->toBeInstanceOf(ShouldBroadcast::class)
             ->toBeInstanceOf(ShouldDispatchAfterCommit::class)
             ->and($attached->broadcastWhen())->toBeTrue()
-            ->and($attached->broadcastOn()[0]->name)->toBe('private-messaging.conversation.'.$conversation->getKey())
+            ->and($attached->broadcastOn()[0]->name)->toBeIn([
+                'private-messaging.conversation.'.$conversation->getKey(),
+                'presence-messaging.conversation.'.$conversation->getKey(),
+            ])
             ->and($attached->broadcastAs())->toBe(AttachmentAttached::BROADCAST_NAME)
             ->and($attached->broadcastWith()['conversation_id'])->toBe($conversation->getKey())
             ->and($attached->broadcastWith()['message_id'])->toBe($message->getKey())
