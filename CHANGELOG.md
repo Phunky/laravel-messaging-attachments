@@ -2,6 +2,10 @@
 
 All notable changes to `phunky/laravel-messaging-attachments` will be documented in this file.
 
+## 0.1.1 - 2026-05-01
+
+**Full Changelog**: https://github.com/Phunky/laravel-messaging-attachments/compare/0.1.0...0.1.1
+
 ## 0.1.0 - 2026-04-30
 
 ### What's Changed
