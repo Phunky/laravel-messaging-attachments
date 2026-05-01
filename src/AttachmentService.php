@@ -168,9 +168,7 @@ class AttachmentService
 
     protected function touchConversationActivity(Conversation $conversation, mixed $activityAt, string $activityType): void
     {
-        if (method_exists($this->messaging, 'touchConversationActivity')) {
-            $this->messaging->touchConversationActivity($conversation, $activityAt, $activityType);
-        }
+        $this->messaging->touchConversationActivity($conversation, $activityAt, $activityType);
     }
 
     protected function nextOrder(Message $message): int
